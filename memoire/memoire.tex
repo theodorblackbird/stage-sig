@@ -1,0 +1,460 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{relsize}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{relsize}
+\usepackage[utf8]{inputenc}
+\usepackage[parfill]{parskip}
+\usepackage{geometry}
+\usepackage{graphicx}
+
+\newtheorem{definition}{Définition}
+\newtheorem{theoreme}{Théorème}
+\begin{document}
+
+\title{Signature}
+\date{}
+\maketitle
+
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{example}{Example}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Ll}{\mathbb{Ll}}
+
+\vspace{10 mm}
+
+
+
+
+\maketitle
+
+
+\section{Signature et apprentissage.}
+
+Les séries temporelles multidimensionnelles sont omniprésentes dans les applications réelles et leur traitement nécessite une attention particulière. Les dépendances entre les composantes d'une série, l'aspect séquentiel mais aussi la masse de données sont autant de difficultés qui poussent la recherche vers de nouvelles méthodes pour exploiter au mieux toute l'information contenue dans les séries. On introduit pour cela un objet mathématique bien connu du calcul stochastique, la signature. On cherchera à comprendre pourquoi il suscite un intérêt croissant dans le domaine de l'apprentissage automatique des séries multivariées et on discutera de quelques méthodes parmi les plus récentes pour son intégration pratique dans des algorithmes.
+
+\subsection{Path}
+\smallskip
+\begin{definition}
+Un chemin est une fonction continue de $[a, b]$ dans $\R^d$
+\end{definition}
+Un chemin est classiquement paramétré par le temps, ce que l'on note alors $X : [a, b] \rightarrow \R^d, \: t \mapsto \left(X^1(t), ..., X^d(t)\right)$. $X(t)$ ou de manière équivalente $X_t = (X_t^1, ..., X_t^d)$
+
+\smallskip
+\begin{definition}
+Let $X : [a, b] \rightarrow \R$ un chemin 1-dimensionnel $f : \R \rightarrow \R$ une fonction. L'intégrale de chemin de $f$ contre $X$ est définie comme $\int_a^b f(X_t)dX_t = \int_a^b f(X_t) \dot X_t dt$, où la dernière intégrale étant par exemple l'intégrale de Lebesgue.
+\end{definition}
+Pour un chemin multidimensionnel $X : [a, b] \rightarrow \R^d$ et une fonction $f : \R^d \rightarrow \R$, l'intégrale de chemin est définie comme $\int_a^b f(X_t) dX_t = \int_a^b f(X_t) \| \dot X_t\| dt$, où $\|.\|$ est la norme euclidienne. \\
+
+On remarque dans la Définition 2 que, $f(X(.))$ est elle même un chemin de $[a, b]$. On peut aussi définir l'intégrale d'un chemin $X : [a,b] \rightarrow \R$ contre un autre chemin $Y : [a, b] \rightarrow \R$ comme :
+\[ \int_a^b Y_t dX_t = \int_a^b Y_t \dot X_t dt \]
+
+\subsection{Signature d'un chemin}
+
+\begin{definition}
+Soit $[a, b]$ et $X = (X^1, ..., X^d) : [a, b] \rightarrow \R^d, t \mapsto X(t) = X_t = (X_t^1, ..., X_t^d)$ un chemin continu par morceau. La signature de $X$ est définie comme la collection des intégrales itérées suivantes.
+
+$$Sig(X) = \left( \underset{a<t_1<...<t_k<b}{\int ... \int } dX_{t_1} \otimes ... \otimes dX_{t_k}\right)_{k \geq 0} = \left( \left(\underset{a<t_1<...<t_k<b}{\int ... \int } dX_{t_1}^{i_1} ... dX_{t_k}^{i_k}\right)_{1 \leq i_1, ..., i_k \leq d} \right)_{k \geq 0}$$
+où le terme pour $k=0$ est $1$ par convention.
+\end{definition}
+
+Cette définition nous pousse à définit l'algèbre tensorielle de  $\mathbb{R}^d$. Comme on peut le constater, le niveau 0 de la signature est $1$, le premier niveau est un vecteur de $\mathbb{R}^d$, le second niveau $\mathbb{R}^d \otimes \mathbb{R}^d$, ...,  et ainsi de suite.
+\begin{definition}
+On appelle algèbre tensorielle de $\mathbb{R}^d$ :
+$$T((\mathbb{R}^d)) = \prod_{k=0}^{\infty} (\mathbb{R}^d)^{\otimes k}$$
+\end{definition}
+
+L'algèbre tensorielle vient avec son produit tensoriel canonique, étendu par bilinéarité: 
+On note pour cela $A = (A_0, A_1, \ldots) \in T((\mathbb{R}^d))$ et $B = (B_0, B_1, \ldots) \in T((\mathbb{R}^d))$. \\
+
+
+$$ A \otimes B = \left( \sum_{j=0}^k A_j \otimes B_{k-j} \right)_{k \geq 0}$$
+
+Ce qui définit bien un élément de l'algèbre tensorielle.
+
+
+Certains propriétés liés à cet opération seront détaillées par la suite.
+
+\begin{definition}
+Étant donnés $i_1, ..., i_k$, la quantité donnée par $$S_{[a, b]}^{i_1, ..., i_k}(X) = \underset{a<t_1<...<t_k<b} {\int ... \int} dX_{t_1}^{i_1} ... dX_{t_k}^{i_k}$$
+est appelé le k-fold d'intégrales itérées de X selon les indices $i_1, ..., i_k$
+\end{definition}
+
+Ce que l'on note $S_{[a, b]}^{i_1, ..., i_k}(X)$ plus simplement comme $S^{i_1, ..., i_k}(X)$ quand il n'y a pas d'ambiguité. Avec cette définition, la signature se décrit comme la suite infinie de toutes ses k-folds d'intégrales itérées : 
+
+$$Sig(X) = \{1, S^1(X), ..., S^d(X), S^{1, 1}(X), S^{1, 2}(X), ..., S^{d, d}(X), ... \}$$
+
+C'est aussi l'ensemble des mots que l'on peut former avec les $\{1, \ldots, d \}$ disponibles.
+Formulation qui vient de la nature récursive (itérative) de la signature et de ses intégrales $(i, j) \in \{1, ..., d\}^2$:\\
+$$S_{[a, b]}^{i, j}(X) = \int \limits_a^b S^i_{[a, s]}(X) dX^j_s = \int \limits_{a < r < s < b} dX^i_r dX^j_s$$
+
+Dont on déduit la formule de  $S^{i_1, ..., i_k}(X)$ pour tout choix d'indices $i_1, ..., i_k$.
+
+
+
+\subsection{Geometric intuition of signature}
+In this section, let us give the reader an intuition of what the first levels of signature yield. At $k=1$, each of the terms $S^i(X) = \int_a^b \dot X_t^i dt = X_t^i(b) - X_t^i(a)$ is simply the increment of the path on dimension $i$ over the interval $[a, b]$.
+
+Let us now consider two indices $(i, j) \in \{1, ..., d\}^2$.\\
+If $i = j$, we have $S^{i, i}(X) = \int_a^b X_t^i dX_t^i = (X_b^i - X_a^i)^2 / 2$. In the case where $i \neq j$, we have: \\ $S^{i, j}(X) = \int_{a<r<s<b} dX_r^i dX_s^j$, which can be seen as the area located below the parameterized curve \\ $\{(X_t^i, X_t^j), t \in [a, b]\}$, and delimited by the time interval and the initial point of the path (see Figure \ref{fig:fig_1}). Conversely, $S^{j, i}(X)$ is the area located above the curve, and delimited by the time interval and the final point of the path.\\ 
+\\
+
+
+
+At the second order level, another interesting geometric interpretation is given by the Levy area of a curve. Levy area is the signed area enclosed by the path and the chord connecting the end-points. 
+$$A_{a, b} = S^{i,j}(X)_{a, b} - S^{j,i}(X)_{a, b}$$
+
+One very interesting geometric interpretation we can guess easily at low levels is shuffle product identity.
+$$ S^{i}(X)_{a, b} \cdot S^{j}(X)_{a, b} = S^{i,j}(X)_{a, b} + S^{i,j}(X)_{a, b}$$
+
+That is to say : nonlinear transformation at low levels can be expressed as linear combination of higher levels. It's a foretaste of the universal non-linearity that will introduce later.
+
+Essentially, the iterated integrals each capture different geometrical features of the path, and the collection of them all (i.e. the signature of the path) defines the path in a very efficient way. As we get higher in the order of the iterated integral, we will capture more subtle features of the path. With this definition, signature is a convenient, but infinite collection of scalars. To make it exploitable, we will then truncate the signature at order $N \in \N$, thus defining 
+$$S_N(X) = \left( \underset{a<t_1<...<t_k<b}{\int ... \int } dX_{t_1} \otimes ... \otimes dX_{t_k}\right)_{0 \leq k \leq N} = \{S^I(X)\}_{I \in \left\{ \{1, ..., d \}^k, 0 \leq k \leq N \right\}}$$ still with the convention that $S^0(X) = 1$
+
+
+
+\newpage
+\subsection{Signature, ODE and CDE.}
+\subsubsection{Integral iteration through ODE.}
+As a first witness of the mathematical importance of signature, we briefly show how signature comes up in ordinary differential equations. We start with a simple example of integral iteration.
+
+The well-known Cauchy-Lipschitz theorem states on existence of an unique solution of any initial value problem. Using math :
+$$y'(t)= f(t, y(t)), \quad y(t_{0}) = y_{0}$$
+
+Has an unique solution since $f$ is uniformly Lipschitz continuous in $y$, in a neighborhood of $t_0$. The classical proof scheme makes use of integral notation of the ODE then solving a fixed-point problem, relying on Banach fixed-point theorem, eventually on Grönwall's lemma for uniqueness.
+$$ \int_{t_0}^{t} f(s, y(s)) ds = y(t) = y(t_0)$$
+If we set $\Gamma$ as : $$\Gamma_{0}(t) = y_0, \quad\Gamma_{k+1}(t) = y_0 + \int_{t_0}^{t} f(s, \Gamma_{k}(s)) ds$$
+$\Gamma$ (known as Picard iteration) would be the candidate of the fixed-point functionnal problem, since a fixed-point yields a solution of the ODE above.
+Let's consider this simplest initial value problem.
+$$y'(t) = 1 + y(t)^{2},  \quad y(t_{0}) = 0 = y_{0}, t_{0} = 0$$
+Which a solution is $y(t) = \tan(t)$.
+Now we start practical computations of Picard iterations.
+
+\[
+\Gamma_{0} = y_0 = 0 \\
+\Gamma_{1}(t) = \int_{0}^{t} ds = t \\
+\Gamma_{2}(t) = \int_{0}^{t} 1 + s^2 ds = t + \frac{t^3}{3}\\
+\Gamma_{3}(t) = \int_{0}^{t} 1 + s^2 ds = t + \frac{t^3}{3} + \frac{2t^5}{15} + \frac{t^7}{63}\\
+\]
+
+and so on.
+Indeed, we are computing the Taylor series expansion of the solution.\\
+\subsubsection{Signature as integral iteration : solving CDE.}
+
+ Now we consider a path $X : [a, b] \xrightarrow \R^d$, $Z : [a,b] \xrightarrow \R (\R^d , \R^e )$. Where $L$ denotes the space of linear maps. Accordingly with the previous path definition, we define the integral
+ $$\int_a ^b Z_t dX_t$$
+ which belongs to $\mathbb{R}^e$. $Z$ is said to be a controlled path. \\
+ Let's consider a controlled differential equation, that is to say :
+ $$dY_t = V(Y_t ) dX_t, \quad Y_a = y$$
+ That means, just as before with ODE, in an integral way :
+ $$Y_t = y + \int_a ^t V(Y_s ) dX_s$$
+ For every $t$ in $[a,b]$.
+ Just as with ODE, we consider Picard iteration with the $\Gamma$ functionnal defined as :
+ $$\Gamma_{k}(Y)_t = y + \int_a ^t V(Y_s)dX_s$$
+ Just as with ODE, finding a fixed-point of this functional leads to a solution of the previous CDE.
+ For ease we suppose that $V$ is a linear map (from $\R^e \xrightarrow \R(\R^d , \R^e )$). Computing first iterations gives us :
+ \begin{align*}
+ \Gamma_{0}(Y)_t &= y \\
+ \Gamma_{1}(Y)_t &= y + \int_a ^t dV(X_s)dX_s \\
+ \Gamma_{2}(Y)_t &= y + \int_a ^t V(\Gamma_{1}(Y)_s )dX_s = y + \int_a ^t dX_s + \int_a ^t\int_a ^s dV(X_u)dV(X_s)  \\
+ \Gamma_{3}(Y)_t &= y + \int_a ^t V(\Gamma_{2}(Y)_s )dX_s =  y + \int_a ^t dX_s + \int_a ^t\int_a ^s dV(X_u)dV(X_s) +  \int_a ^u\int_a ^t \int_a ^s dV(X_v)dV(X_u)dV(X_s) \\
+ \ldots
+ \end{align*}
+and so on.
+First level of the $V(X)$ signature comes out. Moreover, the signature tends to completely determined the solution. And this procedure fastly converges.\\
+
+\begin{theorem}{Factorial decay.}
+Let $X [0,T] \rightarrow V$  be a path. Then  $ \forall k \geq 1$, one has
+$$| \int_{0<u_1 < \ldots <u_k < T} dX_{u_1} \otimes \ldots \otimes dX_{u_k} | \leq \frac{\| X \|^{k}_{1, [0,T]}}{k!}$$
+\end{theorem}
+Fast convergence is crucial : it allows us early truncature, one should have in mind that the calculation grows exponentially with the level of the signature.
+
+
+From what, we deduce for the previous CDE fast convergence to the solution. We inform that first, this results extend to non-linear drivers $V$ \cite{chen-article}, and secondly we were limited until now to piecewise differentiable path even though the signature has sense for more general frameworks in the names of path of bounded p-variations and rough path theory, provided some adaptations (in particular, iterated integrals for Young integral are not uniquely defined). The latter leading to a central theory in SDE. \cite{saint-flour}
+
+
+This fundamental example of signature being part of a mathematical theory intimates us that the information that the signature carries is of utmost importance. \\
+Since we aim to use the signature in machine learning, we recall that practical uses needs truncated signature and not the actual one.
+
+
+The next part of this course tends to show the most important properties of the signature. Most of them justify its growing importance in machine learning by catching crucial information, leading to a powerful non-parametric dimension reduction method.  
+\section{Some properties of the signature}
+\subsection{Chen's identity}
+Recall that within the tensor algebra, we have at our disposal the canonical tensor product. Chen's identity argue that the signature of concatenation of two paths is the tensor product of individual signature.
+
+\begin{theorem}{Chen's identity}
+TO DO
+\end{theorem}
+
+Chen's identity yields that signature computation suits stream data very well : we don't have to know the full stream to start compute the signature, we can compute following the stream flowing and compute the tensor product between different pieces to retrieve the full signature.
+
+
+\subsection{Time-reversal path and signature}
+Firstly we need to introduce the notion of time-reversal of a path.
+\begin{definition}
+Let $X : [a,b] \xrightarrow \R^d$ be a path. We define the time-reversal path $\overleftarrow{X}$ as the path for which $\overleftarrow{X}_t = X_{a+b-t}$
+\end{definition}
+
+Then we state that
+\begin{theorem}
+$$S(X) \otimes S(\overleftarrow{X}) = 1$$
+\end{theorem}
+
+That is, the time-reversal of a path is an inverse for the path considering the tensor product.
+
+\subsection{Invariance to time reparametrisations}
+Invariance to time reparametrisations within signature is a straightforward consequence of integral properties and parametrisation. Let $X, Y$ be two paths, $\psi$ a parametrisation. 
+
+$$\int_a ^b Y_{\psi(t)} dX_{\psi{t}} = \int_a ^b Y_{\psi(t)} \dot{X}_{\psi(t)} \psi'(t) dt = \int_a ^b Y_x dX_x$$
+
+
+These three first properties forbid signature transform to be invertible, even before any truncation, in contrast to Fourier on $L^2$ transform for example. However, one should know that we can in a certain way construct a stream from its signature \cite{Geng_2017}, up to a certain equivalence class : the tree-like equivalence.
+\subsection{Tree-like path and uniqueness }
+\begin{definition}{Tree-like path}
+A path $X : [0, 1] \rightarrow \mathbb{R}^d$ is tree-like if there exists a continuous function $h : [0,1] \rightarrow [0, +\infty[$ such that $h(0) = h(1) = 0$ and such that for all $s,t \in [0,1], s\leq t$
+$$\| X_s - X_t \| \leq h(s) + h(t) - 2 \inf_{u\in [s, t]} h(u)$$
+
+
+\end{definition}
+That definition yields an equivalence relation \cite{uniqueness}: 
+\begin{definition}{Tree-like equivalence}
+Let $X, Y$  be two paths. There are tree-like equivalent if $X * \overleftarrow{Y}$ is tree like.
+\end{definition}
+
+
+It follows immediately from Chen's identity that any path concatenated with its time-reversal is tree-like. This kind of symmetry is unavoidable in machine learning problems, an efficient way to make the signature still relevant in thoses cases is to consider the expanded path $((t, X_t ))_t$ instead of $(X_t)_t$. More generally, any path which has an monotonic component is not tree-like.
+Now we state the main results of uniqueness of the signature. This result is also valid for finite $p$-variations path
+\cite{uniqueness}. 
+
+\begin{theorem}{Uniqueness up to tree-like equivalent}
+Let $X$ be a continuous path with finite variations. We have the following equivalence :
+$$X \mbox{is tree-like} \iff Sig(X) = 1 $$
+\end{theorem}
+
+
+\begin{corollary}
+For $X$ a continuous path with finite variations. there exists a unique path of minimal length $\bar{X}$ called the reduced path, sharing the same signature.
+\end{corollary}
+
+\subsection{Universal nonlinearity}
+A very powerful inherent property of signature is that the signature of a continuous transformation of a stream, belonging to a compact set, can be approximated arbitrary close by a linear function of the initial stream signature. As a reminder, a memorable point of signature method as been reached when it has achieved state-of-the art performances in hand writing recognition. In this case, the continuous transformation of a stream can be interpreted as the natural fluctuation of writing. Let's put mathematical words on it.
+\begin{theorem}{Universal non linearity} \\
+Let $\phi$ be a continuous transformation, \it{ie} a real-valued continuous function on continuous piecewise smooth paths in $\mathbb{R}^d$ and let $\mathbb{K}$ be a compact set of such paths. Furthermore we assume that $X_0 = 0$ for all $X \in K$. Let $\epsilon > 0$. Then there exists a linear functional $L$ such that for all $X \in K$
+$$|\phi(X) - L(S(X))| < \epsilon$$
+\end{theorem}
+
+
+\section{Rappels sur les RKHS et «l'astuce du noyau».}
+
+On commence par rappeler brièvement les notions et résultats classiques portant sur les RKHS et les noyaux.\cite{svm}
+
+\begin{definition}{Noyau}\\
+Soit $\mathcal{X}$ un ensemble non vide.
+Une fonction $k$ de $\mathcal{X} \times \mathcal{X}$ est appelée \textbf{noyau} s'il existe un espace de Hilbert $\mathcal{G}$ et une fonction $\phi : \mathcal{X} \rightarrow \mathcal{G}$ telle que :
+\[
+\forall (x, x^{'}) \in \mathcal{X}^2 : \quad k(x, x^{'} ) = \langle \phi(x), \phi(x^{'}) \rangle_{\mathcal{G}}
+\]
+
+De même, on appelle $\mathcal{G}$ espace de redescription, et $\phi$ fonction de redescription.
+\end{definition}
+
+\begin{definition}{Reproducing Kernel Hilbert Space RKHS}
+
+Soit $\mathcal{H} \subset \mathbb{R}^\mathcal{X}$ un espace de Hilbert. Soit $k$ un noyau défini sur $\mathcal{X}^2$. On dit que $\mathcal{H}$ est un RKHS de noyau $k$ si pour tout $x \in \mathcal{X}$, $k(\cdot, x)$ est dans $\mathcal{H}$ et si on a la propriété dite de reproduction :
+\[ \forall f \in \mathcal{H} : \langle f , k(\cdot, x) \rangle_{\mathcal{H}} = f(x) \]
+\end{definition}
+
+On rappelle brièvement quelques résultats essentiels. Premièrement à tout noyau est associé un unique RKHS (c'est le théorème de Moore-Aronszajn). Ensuite on a une description bien précise de cet espace $\mathcal{H}$ au moyen du noyau.
+
+\begin{theoreme}
+Soit $\mathcal{H}$ un RKHS de noyau $k$.
+Alors :
+\[ \mathcal{H} = \left\{ \sum_{i=1}^{\infty} \alpha_i k(\cdot, x_i ) : \sum_{i=1}^{\infty} \alpha_{i}^2 k(x_i, x_i) < \infty, x_i \in \mathcal{X}, \alpha_i \in \mathbb{R} \right\}
+\]
+\end{theoreme}
+
+Enfin on présente un dernier résultat qui justifie la pertinence du modèle : 
+
+\begin{theoreme}{du représentant} \\
+Soit $k$ un noyau sur $\mathcal{X}^2$, $X \in (\mathcal{X}, \mathcal{Y})^N$ un échantillon, $R$ un risque empirique quelconque et $\psi$ une fonction positive strictement croissante (fonction de régularisation).
+Alors toute fonction $\hat{h}$ qui est solution du problème :
+\[ \min_{h \in \mathcal{H}} R(h) + \lambda \psi(h) \]
+
+admet une représentation portée par les données, \textit{ie} :
+\[ \hat{h}(\cdot) = \sum_{i=1}^{N} \alpha_i k(X_i, \cdot) \]
+
+De manière informelle, on peut restreindre la minimisation d'un risque empirique dans un RKHS à un domaine beaucoup plus simple, qui ne dépend que des données.
+\end{theoreme}
+
+On dispose d'un choix canonique d'espace de redescription (pourvu de sa fonction de redescription), en posant :
+\[ \phi(x) = k(\cdot, x) \]
+Ainsi l'espace de redescription $\mathcal{G}$ est ici égal à $\mathcal{H}$ et par la propriété de reproduction il découle :
+\[ \forall (x, x^{'}) \in \mathcal{X}^2, \quad \langle \phi(x), \phi(x^{'}) \rangle_{\mathcal{G}} = \langle k(\cdot, x), k(\cdot, x^{'})\rangle_{\mathcal{H}} = k(x,x^{'}) \]
+
+Dans cette configuration, l'astuce du noyau est la suivante : nos données vivent dans l'espace $\mathcal{X}$. On soupçonne (ou on espère) qu'un espace de redescription existe et que celui-ci permettra une meilleure représentation de nos données. Dés lors que notre algorithme de machine learning préféré n'a besoin que des produits scalaires entre les données pour fonctionner, et que l'on dispose d'un noyau dont le calcul effectif n'est pas trop coûteux, on peut utiliser nos algorithmes sur nos données vivant dans l'espace $\mathcal{H}$ dont la dimension est potentiellement bien plus grande, voire infinie ($\mathcal{H}$ est un espace de fonction ). \\
+Par ailleurs le théorème du représentant nous garantie que la solution de notre problème favori s'exprimera à partir de nos données ponctuelles.\\ 
+
+En particulier, et c'est ce qui fait l'efficacité des méthodes reposants sur cette astuce, dés lors que le noyau n'est pas linéaire, on est en mesure d'apprendre des classifieurs non-linéaires avec des méthodes linéaires. La redescription est implicite : on ne cherche pas à calculer les coordonnées des données dans la nouvelle représentation, tout passe par la fonction noyau. \\ 
+
+Les algorithmes classiques qui sont compatibles avec cette approche sont les SVM, l'ACP, la SVR (ou ridge regression) et bien d'autres.
+
+\section{La signature et les méthodes à noyau.}
+
+Pour pouvoir tirer profit de l'astuce du noyau sur des données séquentielles, il faut disposer d'un noyau sur l'espace des chemins. C'est le cœur de l'article \textit{Kernels for Sequentially Ordered Data} \cite{ksod} qui propose une construction d'un tel noyau utilisable en pratique pour des chemins à valeurs dans $\mathcal{X}$ partant de n'importe quel noyau de $\mathcal{X}$. \\
+
+Partant donc d'un noyau $k$ «statique», on va passer de chemins à valeurs dans $\mathcal{X}$ à des chemins à valeurs dans $\mathcal{H}$ l'espace de redescription canonique associée à $k$. Notre fonction de redescription ne sera rien d'autre que la signature. \\ \\
+L'astuce du noyau dans ce cas là se résumera ainsi de manière informelle : si l'on veut utiliser nos algorithmes favoris de ML, il faudrait être en mesure de calculer une matrice de Gram contenant tous les produits scalaire des différentes signatures (pour un produit scalaire qui reste à définir). Une analyse astucieuse nous montrera qu'il n'est pas nécessaire de calculer ni de stocker les signatures de nos échantillons : on peut construire un noyau $k^{\bigoplus}$ par dessus $k$, et son évaluation est peu coûteuse en ressources de calculs. \\
+
+On propose d'abord de regarder en détail la construction de $k^{\bigoplus}$. Ensuite on présente des résultats issu de l'article \textit{The signature Kernel is the solution of a Goursat PDE}, qui montre que le noyau $k^{\bigoplus}$ est étroitement lié à une famille d'EDP hyperboliques ouvrant la voie à l'utilisation de signatures non-tronquées ainsi qu'à d'autres méthodes de calculs.
+
+\subsection{Produit scalaire de signature et noyau pour chemins}
+
+Reprenons notre feuille de route : on part d'un noyau $k$ sur $\mathcal{X}$ (par exemple un noyau gaussien), et on veut en tirer un noyau pour $\mathcal{P}_{\mathcal{X}}$, l'espace des chemins à valeurs dans $\mathcal{X}$. \\
+
+On «passe» d'abord notre chemin dans son espace de représentation canonique.
+
+\begin{align*}
+\mathcal{P}_{\mathcal{X}} & \quad \rightarrow \quad  \mathcal{P}_{\mathcal{H}}\\
+t \mapsto x(t) & \quad \mathlarger{\mapsto} \quad t \mapsto k_x (t)  = k(x(t), \cdot ) \\
+\end{align*}
+
+Puis on considère l'évaluation d'un certain produit scalaire lui même défini sur l'espace des signatures des chemins dans $\mathcal{P}_{\mathcal{H}}$.\footnote{On remarque que l'on n'utilise pas une définition alternative du noyau vue comme fonction définie positive car la construction explicite à partir du produit scalaire est possible. Ce n'est pas toujours le cas quand on utilise des méthodes à noyaux.}
+
+\begin{align*}
+\mathcal{P}_{\mathcal{H}} \times \mathcal{P}_{\mathcal{H}} & \quad \rightarrow \quad \mathbb{R} \\
+(k_x , k_y ) & \quad \mapsto \quad \langle S(k_x ),  S(k_y ) \rangle \\
+\end{align*}
+ 
+où \begin{align*}
+\langle S(k_x ),  S(k_y ) \rangle & = \sum_{m\geq 0} \langle S^m (k_x ), S^m (k_y ) \rangle _{\mathcal{H}^{\otimes m}} \\
+&=\sum_{m\geq 0} \prod_{i=0}^m \langle S^m_i (k_x ), S^m_i (k_y ) \rangle _{\mathcal{H}}\\
+& \text{où } S^m(k_x )= S^m_1(k_x ) \otimes \ldots \otimes S^m_m(k_x ) \in \mathcal{H}^{\otimes m}\\
+\end{align*}
+
+Finalement il ne reste qu'à tout mettre bout à bout pour obtenir notre noyau à signature $k^{\bigoplus}$ : 
+\begin{align*}
+k^{\bigoplus} : \mathcal{P}_{\mathcal{X}} \times \mathcal{P}_{\mathcal{X}} & \quad \rightarrow \quad \mathbb{R} \\
+(x ,y) & \quad \mapsto k^{\bigoplus}(x, y) = \quad \langle S(k_x ),  S(k_y ) \rangle \\
+\end{align*}
+
+Notons que la signature est bien définie comme limite de sommes de Riemmann-Stieltjes, ici l'intégrale prend ses valeurs dans $\mathcal{H}$, voir par exemple Differential Equations Driven by Rough Paths.
+
+\subsection{Stratégies de calcul de la matrice de Gram}
+On commence par montrer que le noyau $k^{\bigoplus}$ s'écrit sous une forme récursive qui s’avérera déterminante pour les considérations pratiques. 
+\begin{theoreme}
+Pour tout $x,y$ dans $\mathcal{P}$ : 
+\[
+k^{\bigoplus}(x,y) = \sum_{m\geq 0} \int_{\substack{s_1 < \ldots < s_m \\ t_1 < \ldots < t_m}} \prod_{i=1}^{m} d\kappa (s_i , t_i)
+\]
+où $\kappa$ est une mesure signée sur $[0,1]^2$ définie comme :
+\[ \kappa([s, t] \times [u,v] ) = k(x(t), y(v)) - k(x(s), y(v) - k(s(t), y(v)) + k(x(s), y(u))
+\]
+
+On en déduit la forme récursive :
+\[ 
+k^{\bigoplus}(x,y) = 1 + \int_{(s_1 , t_1)\in [0,1]^2} \left( 1 + \int_{(s_2 , t_2) \in [0,s_1 ]\times [0,t_1 ]} ( 1 + \ldots) d\kappa_{x,y} (s_2, t_2) \right) d\kappa_{x,y} (s_1 , t_1 )
+\]
+\end{theoreme}
+Preuve : 
+\begin{align*}
+k^{\bigoplus}(x,y) &= \langle S(k_x ), S(k_y )\rangle \\
+&=\sum_{m\geq 0} \langle \int dk_{x}^{\otimes m} ,  \int dk_{y}^{\otimes m} \rangle_{\mathcal{H}^{\otimes m}}\\
+&=\sum_{m\geq 0} \langle \int_0^1 \left(\int_0^{s_{m-1}} dk_x^{\otimes (m-1)} \right) \otimes dk_{x(s_m )}, \int_0^1 \left(\int_0^{t_{m-1}} dk_y^{\otimes (m-1)} \right) \otimes dk_{y(t_m )} \rangle \\
+&= 1 + \sum_{m\geq 1} \int_{\substack{s_m \in [0,1] \\ t_m \in [0,1]}} \langle \int_{0}^{s_m} dk_x^{\otimes (m)}, \int_0^{t_{m-1}} dk_y^{\otimes (m-1)} \rangle \langle dk_{x(s_m)} , dk_{y(t_m )\rangle )}\\
+&= \ldots\\
+&= 1 + \sum_{m\geq 1} \int_{\substack{s_m \in [0,1] \\ t_m \in [0,1]}} \int_{\substack{s_{m-1} \in [0,s_m] \\ t_{m-1} \in [0,t_m]}} \ldots \int_{\substack{s_{1} \in [0,s_2] \\ t_{1} \in [0,t_2]}} \langle dk_{x(s_1 )} , dk_{y(t_1 )} \rangle  \ldots  \langle dk_{x(s_m)} , dk_{y(t_m )} \rangle 
+\end{align*}
+
+On considère dans un premier temps les chemins linéaires par morceaux $x$ (resp. $y$) avec sa subdivision de l'intervalle $s_1 \leq \ldots \leq s_k$ (resp. $t_1 \leq \ldots \leq t_l$). On a alors :
+\begin{align*}
+&\int_{(s_1 , s_k) \times (t_1 , t_l )} \langle dk_{x(s)} , dk_{y(t) } \rangle_{\mathcal{H}}\\
+&= \sum_{\substack{1\leq i \leq k-1 \\ 1 \leq j \leq l-1}} \int_{(s_1 , s_k) \times (t_1 , t_l )} \langle dk_{x(s)} , dk_{y(t) } \rangle_{\mathcal{H}}\\
+&= \sum_{\substack{1\leq i \leq k-1 \\ 1 \leq j \leq l-1}} \langle k_{x(s_{i+1})} - k_{x(s_i )}, k_{y(t_{j+1})} - k_{y(t_j )} \rangle_{\mathcal{H}}\\
+&= \sum_{\substack{1\leq i \leq k-1 \\ 1 \leq j \leq l-1}} k(x(s_{i+1}), y(t_{j+1})) - k(x(s_i), y(t_{j+1})) - k(x(s_{i+1}, y(t_j )) + k(x(s_i ), y(t_j ))\\
+&= \sum_{\substack{1\leq i \leq k-1 \\ 1 \leq j \leq l-1}} \kappa([s_1 , s_k] \times [t_1 , t_l ]) = \int_{(s_1 , s_k) \times (t_1 , t_l )} d\kappa_{x,y} (s,t)
+\end{align*}
+On a ainsi montré la formule dans le cas de chemins linéaires par morceaux. Le résultat suit par approximation linéaire par morceaux dans le cas continu, en choisissant une subdivision dont le pas maximal tend vers $0$ et en considérant $\kappa_{x^n, y^n}$ la mesure associée à l'approximation.
+D'une part $\kappa_{x^n, y^n}$ converge clairement faiblement vers $\kappa_{x,y}$ et d'autre part $\langle S(x^n) , S(y^n) \rangle$ converge vers $\langle S(x) , S(y) \rangle$. Ce qui permet de conclure dans le cas général.\\ \\
+
+De part la nature séquentielle de nos données et motivée par la preuve précédente, il est naturel de se demander à quel point l'approximation linéaire par morceau est fidèle au signal original, en termes de signatures. L'article fournit des bornes qui contrôlent cette erreur d'approximation. \\ \\
+
+\begin{theoreme}
+Quelque soit $h$ dans $C^1 ([0,1], \mathcal{H})$ et $\pi$ une subdivision de $[0,1]$.
+\[
+\| S^+ (h^\pi ) - S(h) \| \leq \| h \|_1 e^{\| h \|_1 } \cdot \max_{i=1, \ldots , l-1 } \| h_{[t_i , t_{i+1}]}\|_1
+\]
+
+où $S^+ (h^\pi)$ est la signature de l'approximation linéaire par morceaux aux points de la subdivision $\pi$, et $\| \cdot \|_1$ est la variation totale.
+\end{theoreme}
+
+Finalement on abouti à un noyau discrétisé. On doit, pour espérer une quelconque implémentation, tronquer les signatures jusqu'à un ordre $m$, hyper-paramètre de notre modèle que l'on a l'habitude de traiter avec la signature en ML.\\
+On définit alors le noyau à signature discrétisé $k^+_m$ tronqué à l'ordre $m$.
+\begin{definition}
+
+\[ k^+_m : {\mathcal{X}^+}^2 \rightarrow \mathbb{R}, k^+_m = \langle S^+ (k_x ), S^+ (k_y ) \rangle_m
+\]
+Où $\mathcal{X^+} = \cup_{l\geq 0} \mathcal{X}^l $ est l'ensemble des séquences de points de $\mathcal{X}$.
+Une forme récursive est déduite des théorèmes précédents :
+\begin{align*}
+k^+_m(x,y) &= \sum_{d=1}^m \sum_{\substack{1\leq i_1 < \ldots < i_d < |x| \\ 1\leq j_1 < \ldots < j_d < |y| }} \prod_{r=1}^d \nabla_{i_r , j_r}k(x, y)\\
+&=1 + \sum_{\substack{|x| > i_1 \geq 1 \\ |y| > j_1 \geq 1 }} \nabla_{i_1, j_1} k(x,y) \left( 1 + \ldots \left(1 + \sum_{\substack{|x| > i_m \geq i_{m-1} \\ |y| > j_m \geq j_{m-1} }} \nabla_{i_m, j_m} k(x,y) \right) \right)
+\end{align*} 
+avec \[ \nabla_{i,j} k(x,y) := k(x_{i+1} , y{j+1} ) + k(x_i , y_j ) - k(x_i , y_{j+1} ) - k(x_{i+1} , y_j ) \]
+
+
+\end{definition}
+
+
+Si l'on implémente directement cette forme récursive en tirant parti des opérations vectorisées de bases fournies par \textit{NumPy} par exemple, on se retrouve à calculer directement la matrix de Gram avec une complexité en temps en $O(n^2  l^2 m)$ et en mémoire en $O(l^2)$. L'astuce du noyau réside ici en l'absence de dépendance de la dimension de $\mathcal{H}$. \\
+
+\subsection{Méthodes tirant parti de l'approximation de matrice à rang faible}
+
+
+
+L'article propose deux niveaux d'approximations. L'une portant sur la matrice de Gram $(k_m^+ (x_i , x_j))_{1\leq i, j \leq n}$ (sequence-vs-sequence), et l'autre sur les matrices de similarités entre les séquences $\left( \nabla_{a, b} k(x,y) \right)_{\substack{1\leq a \leq |x| \\1\leq b \leq |y| }}$, à l'aide d'approximations de faible rang, afin de permettre un passage à l'échelle pour les grands jeux de données et/ou des séries plus longues.
+
+\subsubsection{Approximation de la matrice de Gram par la méthode de Nyström}
+Dans le but de réduire la complexité du calcul de la matrice de Gram, on introduit une méthode classique d'approximation de la matrice de Gram.\cite{nystrom}
+
+
+
+\section{Le noyau à signature est solution d'une EDP hyperbolique.}
+
+On présente ici des travaux récents qui vont dans le prolongement de l'article précédent. Dans \textit{The Signature Kernel is the solution of a Goursat PDE} \cite{goursat}, il est montré que le noyau non tronqué est solution d'une EDP hyperbolique, l'EDP de Goursat. Un schéma numérique de résolution est proposé et sa complexité est comparable à ce qui a été exposé avant, profitant de la possible parallélisation dans le GPU. \\
+
+On énonce le résultat central de cet article.
+\begin{theoreme}
+Soit $I=[u, u^{'} ]$ et $J = [v, v^{'} ]$ deux intervalles compacts et soit $x \in C^1 (I,V)$ où $V$ est un espace de Banach. Le noyau signature $k^{\bigoplus}$ est solution d'une EDP. Plus exactement on pose :
+\[ \forall (s,t) \in I\times J, \quad k_{x,y}(s,t) = \langle S(x)_{[u, s]} , S(y)_{[v, t]} \rangle
+\]
+On regarde donc désormais le produit scalaire de deux signatures sur des intervalles que l'on paramètre par la droite. Cette fonction est solution de l'EDP suivante.
+\[
+\frac{\partial^2 k_{x,y}}{\partial s \partial t} = \langle \dot{x_s}, \dot{y_t} \rangle_V k_{x,y}, \quad k_{x,y}(u, \cdot) = k_{x,y}(\cdot , v) = 1
+\]
+
+Preuve :
+Les conditions initiales sont clairement vérifiées 
+\[
+\]
+
+
+\end{theoreme}
+\bibliographystyle{plain}
+\bibliography{ref}
+\end{document}
