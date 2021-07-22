@@ -421,7 +421,9 @@ avec \[ \nabla_{i,j} k(x,y) := k(x_{i+1} , y{j+1} ) + k(x_i , y_j ) - k(x_i , y_
 \end{definition}
 
 
-Si l'on implémente directement cette forme récursive en tirant parti des opérations vectorisées de bases fournies par \textit{NumPy} par exemple, on se retrouve à calculer directement la matrix de Gram avec une complexité en temps en $O(n^2  l^2 m)$ et en mémoire en $O(l^2)$. L'astuce du noyau réside ici en l'absence de dépendance de la dimension de $\mathcal{H}$. \\
+Si l'on implémente directement cette forme récursive en tirant parti des opérations vectorisées de bases fournies par \textit{NumPy} par exemple, on se retrouve à calculer directement la matrice de Gram avec une complexité en temps en $O(n^2  l^2 m)$ et en mémoire en $O(l^2)$. L'astuce du noyau réside ici en l'absence de dépendance de la dimension de $\mathcal{H}$. \\
+
+\subsection{Ordre supérieur d'approximations et }
 
 \subsection{Méthodes tirant parti de l'approximation de matrice à rang faible}
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2021.5.28)  21 JUL 2021 15:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2021.5.28)  22 JUL 2021 19:22
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -387,27 +387,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 178--181
 
  []
 
-
-LaTeX Warning: Citation `chen-article' on page 5 undefined on input line 189.
-
-
-LaTeX Warning: Citation `saint-flour' on page 5 undefined on input line 189.
-
-[5]
-
-LaTeX Warning: Citation `Geng_2017' on page 6 undefined on input line 227.
-
-
-LaTeX Warning: Citation `uniqueness' on page 6 undefined on input line 235.
-
-
-LaTeX Warning: Citation `uniqueness' on page 6 undefined on input line 243.
-
-[6]
-
-LaTeX Warning: Citation `svm' on page 7 undefined on input line 265.
-
-[7]
+[5] [6] [7]
 Underfull \hbox (badness 10000) in paragraph at lines 310--312
 
  []
@@ -416,9 +396,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 310--312
 Underfull \hbox (badness 10000) in paragraph at lines 313--314
 
  []
-
-
-LaTeX Warning: Citation `ksod' on page 8 undefined on input line 319.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 319--320
@@ -466,47 +443,39 @@ Underfull \hbox (badness 10000) in paragraph at lines 424--425
  []
 
 
-Overfull \hbox (18.6801pt too wide) in paragraph at lines 426--426
+Overfull \hbox (18.6801pt too wide) in paragraph at lines 428--428
 []\T1/cmr/bx/n/12 Méthodes ti-rant parti de l'ap-proxi-ma-tion de ma-trice à ra
 ng faible 
  []
 
 
-Overfull \hbox (40.27017pt too wide) in paragraph at lines 430--431
+Overfull \hbox (40.27017pt too wide) in paragraph at lines 432--433
 []\T1/cmr/m/n/10 L'article pro-pose deux ni-veaux d'ap-proxi-ma-tions. L'une po
 r-tant sur la ma-trice de Gram $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 k[]\OT1/cmr/m
 /n/10 (\OML/cmm/m/it/10 x[]; x[]\OT1/cmr/m/n/10 ))[]$
  []
 
 
-Overfull \hbox (25.52348pt too wide) in paragraph at lines 430--431
+Overfull \hbox (25.52348pt too wide) in paragraph at lines 432--433
 \T1/cmr/m/n/10 (sequence-vs-sequence), et l'autre sur les ma-trices de si-mi-la
 -ri-tés entre les sé-quences $[][]$,
  []
 
 
-LaTeX Warning: Citation `nystrom' on page 12 undefined on input line 433.
-
-
-LaTeX Warning: Citation `goursat' on page 12 undefined on input line 439.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 439--440
+Underfull \hbox (badness 10000) in paragraph at lines 441--442
 
  []
 
-[12]
-No file memoire.bbl.
-[13] (./memoire.aux)
+[12] (./memoire.bbl) [13] (./memoire.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 5487 strings out of 481182
- 74901 string characters out of 5913604
- 390664 words of memory out of 5000000
- 22367 multiletter control sequences out of 15000+600000
+ 5501 strings out of 481182
+ 75054 string characters out of 5913604
+ 390696 words of memory out of 5000000
+ 22379 multiletter control sequences out of 15000+600000
  418849 words of font info for 65 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  68i,16n,74p,789b,424s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -532,9 +501,9 @@ st/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/font
 s/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1
 /public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/symbols/msbm7.pfb>
-Output written on memoire.pdf (13 pages, 258769 bytes).
+Output written on memoire.pdf (13 pages, 263713 bytes).
 PDF statistics:
- 457 PDF objects out of 1000 (max. 8388607)
+ 468 PDF objects out of 1000 (max. 8388607)
  106 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)

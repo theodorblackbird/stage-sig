@@ -1,0 +1,48 @@
+\begin{thebibliography}{1}
+
+\bibitem{uniqueness}
+Horatio Boedihardjo, Xi~Geng, Terry Lyons, and Danyu Yang.
+\newblock The signature of a rough path: Uniqueness.
+\newblock {\em Advances in Mathematics}, 293:720 -- 737, 2016.
+
+\bibitem{chen-article}
+Kuo-Tsai Chen.
+\newblock Integration of paths--a faithful representation of paths by
+  noncommutative formal power series.
+\newblock {\em Transactions of the American Mathematical Society},
+  89(2):395--407, 1958.
+
+\bibitem{nystrom}
+Petros Drineas and Michael~W. Mahoney.
+\newblock On the nystr\"{o}m method for approximating a gram matrix for
+  improved kernel-based learning.
+\newblock {\em J. Mach. Learn. Res.}, 6:2153–2175, December 2005.
+
+\bibitem{Geng_2017}
+Xi~Geng.
+\newblock Reconstruction for the signature of a rough path.
+\newblock {\em Proceedings of the London Mathematical Society},
+  114(3):495–526, Jan 2017.
+
+\bibitem{ksod}
+Franz~J. Kiraly and Harald Oberhauser.
+\newblock Kernels for sequentially ordered data.
+\newblock {\em Journal of Machine Learning Research}, 20(31):1--45, 2019.
+
+\bibitem{goursat}
+Cristopher Salvi, Thomas Cass, James Foster, Terry Lyons, and Weixin Yang.
+\newblock The signature kernel is the solution of a goursat pde, 2021.
+
+\bibitem{svm}
+Ingo Steinwart and Andreas Christmann.
+\newblock {\em Support vector machines}.
+\newblock Springer Science \& Business Media, 2008.
+
+\bibitem{saint-flour}
+Thierry Lévy~(auth.) Terry J.~Lyons, Michael~Caruana.
+\newblock {\em Differential Equations Driven by Rough Paths: École d'Été de
+  Probabilités de Saint-Flour XXXIV - 2004}.
+\newblock Lecture notes in mathematics 1908. Springer-Verlag Berlin Heidelberg,
+  1 edition, 2007.
+
+\end{thebibliography}
